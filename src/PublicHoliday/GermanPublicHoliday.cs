@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-
-// ReSharper disable InconsistentNaming
+using System.Linq;
 
 namespace PublicHoliday
 {
     /// <summary>
     /// German Federal (German Unity Day) and State Public Holidays (excluding Sundays)
     /// </summary>
-    public class GermanPublicHoliday : PublicHolidayBase
+    public class GermanPublicHoliday : ExtendedPublicHoliday
     {
-        /// <summary>
-        /// Gets or sets the state (ISO 3166-2:DE), + default All for all states.
-        /// </summary>
-        public States State { get; set; }
+        #region  Inner Types
 
         /// <summary>
         ///
@@ -106,11 +102,71 @@ namespace PublicHoliday
             TH,
         }
 
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the state (ISO 3166-2:DE), + default All for all states.
+        /// </summary>
+        public States State { get; set; }
+
+        /// <summary>
+        /// Whether this state observes epiphany.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this state observes epiphany; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasEpiphany => Array.IndexOf(new[] { States.BW, States.BY, States.ST }, State) > -1;
+
+        /// <summary>
+        /// Whether this state observes Fronleichnam.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this state observes Fronleichnam; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasCorpusChristi => Array.IndexOf(new[] { States.BW, States.BY, States.HE, States.NW, States.RP, States.SL }, State) > -1;
+
+        /// <summary>
+        /// Whether this state observes Mariä Himmelfahrt.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this state observes Mariä Himmelfahrt; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasAssumption => States.SL == State;
+
+        /// <summary>
+        /// Whether this state observes Buß- und Bettag
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this state observes Buß- und Bettag; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasRepentance => States.SN == State;
+
+        /// <summary>
+        /// Whether this state observes Reformationstag
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this state observes Reformationstag; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasReformation => Array.IndexOf(new[] { States.BB, States.MV, States.SN, States.ST, States.TH }, State) > -1;
+
+        /// <summary>
+        /// Whether this state observes Allerheiligen
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this state observes Allerheiligen; otherwise, <c>false</c>.
+        /// </value>
+        public bool HasAllSaints => Array.IndexOf(new[] { States.BW, States.BY, States.NW, States.RP, States.SL }, State) > -1;
+
+        #endregion
+
+        #region Holiday Methods
+
         /// <summary>
         /// Neujahrstag New Year's Day January 1
         /// </summary>
         /// <param name="year"></param>
-
         public static DateTime NewYear(int year)
         {
             return new DateTime(year, 1, 1);
@@ -125,14 +181,6 @@ namespace PublicHoliday
         {
             return new DateTime(year, 1, 6);
         }
-
-        /// <summary>
-        /// Whether this state observes epiphany.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this state observes epiphany; otherwise, <c>false</c>.
-        /// </value>
-        public bool HasEpiphany => Array.IndexOf(new[] { States.BW, States.BY, States.ST }, State) > -1;
 
         /// <summary>
         /// Karfreitag - Good Friday
@@ -179,6 +227,13 @@ namespace PublicHoliday
         }
 
         /// <summary>
+        /// Pfingstsonntag - Pentecost
+        /// </summary>
+        /// <param name="year"></param>
+
+        public static DateTime PentecostSunday(int year) => PentecostMonday(year).AddDays(-1);
+
+        /// <summary>
         /// Pfingstmontag - Pentecost
         /// </summary>
         /// <param name="year"></param>
@@ -189,6 +244,7 @@ namespace PublicHoliday
             hol = hol.AddDays((7 * 7) + 1);
             return hol;
         }
+
 
         /// <summary>
         /// Fronleichnam - CorpusChristi
@@ -204,14 +260,6 @@ namespace PublicHoliday
         }
 
         /// <summary>
-        /// Whether this state observes Fronleichnam.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this state observes Fronleichnam; otherwise, <c>false</c>.
-        /// </value>
-        public bool HasCorpusChristi => Array.IndexOf(new[] { States.BW, States.BY, States.HE, States.NW, States.RP, States.SL }, State) > -1;
-
-        /// <summary>
         /// Mariä Himmelfahrt - Assumption of Mary
         /// </summary>
         /// <param name="year"></param>
@@ -219,14 +267,6 @@ namespace PublicHoliday
         {
             return new DateTime(year, 8, 15);
         }
-
-        /// <summary>
-        /// Whether this state observes Mariä Himmelfahrt.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this state observes Mariä Himmelfahrt; otherwise, <c>false</c>.
-        /// </value>
-        public bool HasAssumption => States.SL == State;
 
         /// <summary>
         /// Tag der Deutschen Einheit - German Unity
@@ -246,13 +286,6 @@ namespace PublicHoliday
             return new DateTime(year, 10, 31);
         }
 
-        /// <summary>
-        /// Whether this state observes Reformationstag
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this state observes Reformationstag; otherwise, <c>false</c>.
-        /// </value>
-        public bool HasReformation => Array.IndexOf(new[] { States.BB, States.MV, States.SN, States.ST, States.TH }, State) > -1;
 
         /// <summary>
         /// Allerheiligen - All Saints
@@ -263,14 +296,6 @@ namespace PublicHoliday
         {
             return new DateTime(year, 11, 1);
         }
-
-        /// <summary>
-        /// Whether this state observes Allerheiligen
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if this state observes Allerheiligen; otherwise, <c>false</c>.
-        /// </value>
-        public bool HasAllSaints => Array.IndexOf(new[] { States.BW, States.BY, States.NW, States.RP, States.SL }, State) > -1;
 
         /// <summary>
         /// Buß- und Bettag - Repentance and Prayer
@@ -284,12 +309,14 @@ namespace PublicHoliday
         }
 
         /// <summary>
-        /// Whether this state observes Buß- und Bettag
+        /// Heiligabend - Christmas eve
         /// </summary>
-        /// <value>
-        /// <c>true</c> if this state observes Buß- und Bettag; otherwise, <c>false</c>.
-        /// </value>
-        public bool HasRepentance => States.SN == State;
+        /// <param name="year"></param>
+
+        public static DateTime ChristmasEve(int year)
+        {
+            return new DateTime(year, 12, 24, 14, 0, 0);
+        }
 
         /// <summary>
         /// Weihnachtstag - Christmas
@@ -312,29 +339,36 @@ namespace PublicHoliday
         }
 
         /// <summary>
+        /// Silvester - New Year's Eve
+        /// </summary>
+        /// <param name="year"></param>
+
+        public static DateTime NewYearsEve(int year)
+        {
+            return new DateTime(year, 12, 31, 14, 0, 0);
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        #region PublicHolidayBase Override Methods
+
+        /// <summary>
         /// List of federal and state holidays (for defined <see cref="State"/>)
         /// </summary>
         /// <param name="year">The year.</param>
 
         public override IList<DateTime> PublicHolidays(int year)
         {
-            var bHols = new List<DateTime> { NewYear(year) };
-            if (HasEpiphany) bHols.Add(Epiphany(year));
-            bHols.Add(GoodFriday(year));
-            bHols.Add(EasterMonday(year));
-            bHols.Add(MayDay(year));
-            bHols.Add(Ascension(year));
-            bHols.Add(PentecostMonday(year));
-            if (HasCorpusChristi) bHols.Add(CorpusChristi(year));
-            if (HasAssumption) bHols.Add(Assumption(year));
-            bHols.Add(GermanUnity(year));
-            //All states observe Reformation in 2017, 500th anniversary
-            if (HasReformation || year == 2017) bHols.Add(Reformation(year));
-            if (HasAllSaints) bHols.Add(AllSaints(year));
-            if (HasRepentance) bHols.Add(Repentance(year));
-            bHols.Add(Christmas(year));
-            bHols.Add(StStephen(year));
-            return bHols;
+            var days = new List<DateTime>();
+            var holidays = PublicHolidayNames(year);
+            foreach (var day in holidays)
+            {
+                days.Add(day.Key);
+            }
+            return days;
+
         }
 
         /// <summary>
@@ -346,22 +380,31 @@ namespace PublicHoliday
         /// </returns>
         public override IDictionary<DateTime, string> PublicHolidayNames(int year)
         {
-            var bHols = new Dictionary<DateTime, string> { { NewYear(year), "Neujahrstag" } };
-            if (HasEpiphany) bHols.Add(Epiphany(year), "Heilige Drei Könige");
-            bHols.Add(GoodFriday(year), "Karfreitag");
-            bHols.Add(EasterMonday(year), "Ostermontag");
-            bHols.Add(MayDay(year), "Tag der Arbeit");
-            bHols.Add(Ascension(year), "Christi Himmelfahrt");
-            bHols.Add(PentecostMonday(year), "Pfingstmontag");
-            if (HasCorpusChristi) bHols.Add(CorpusChristi(year), "Fronleichnam");
-            if (HasAssumption) bHols.Add(Assumption(year), "Mariä Himmelfahrt");
-            bHols.Add(GermanUnity(year), "Tag der Deutschen Einheit");
-            if (HasReformation || year == 2017) bHols.Add(Reformation(year), "Reformationstag");
-            if (HasAllSaints) bHols.Add(AllSaints(year), "Allerheiligen");
-            if (HasRepentance) bHols.Add(Repentance(year), "Buß- und Bettag");
-            bHols.Add(Christmas(year), "Weihnachtstag");
-            bHols.Add(StStephen(year), "Zweiter Weihnachtsfeiertag");
-            return bHols;
+            var holidays = AllHolidaysName(year);
+            for (int i = 0; i < holidays.Count; i++)
+
+                foreach (var item in holidays)
+                {
+                    switch (item.Value)
+                    {
+                        case "Heilige Drei Könige": { if (HasEpiphany) holidays.Remove(item.Key); break; }
+                        case "Fronleichnam": { if (HasCorpusChristi) holidays.Remove(item.Key); break; }
+                        case "Mariä Himmelfahrt": { if (HasAssumption) holidays.Remove(item.Key); break; }
+                        case "Reformationstag": { if (HasReformation || year == 2017) holidays.Remove(item.Key); break; }
+                        case "Allerheiligen": { if (HasAllSaints) holidays.Remove(item.Key); break; }
+                        case "Buß- und Bettag": { if (HasRepentance) holidays.Remove(item.Key); break; }
+                        case "Ostersonntag":
+                        case "Pfingstsonntag":
+                        case "Heiligabend":
+                        case "Silvester":
+                            {
+                                holidays.Remove(item.Key); break;
+                            }
+                        default:
+                            break;
+                    }
+                }
+            return holidays;
         }
 
         /// <summary>
@@ -373,67 +416,98 @@ namespace PublicHoliday
         /// </returns>
         public override bool IsPublicHoliday(DateTime dt)
         {
-            var year = dt.Year;
-            var date = dt.Date;
-
-            switch (dt.Month)
+            foreach (var day in PublicHolidayNames(dt.Year))
             {
-                case 1:
-                    if (NewYear(year) == date)
-                        return true;
-                    if (HasEpiphany && Epiphany(year) == date)
-                        return true;
-                    break;
-
-                case 3:
-                case 4:
-                    if (GoodFriday(year) == date)
-                        return true;
-                    if (EasterMonday(year) == date)
-                        return true;
-                    break;
-
-                case 5:
-                case 6:
-                    if (MayDay(year) == date)
-                        return true;
-                    if (Ascension(year) == date)
-                        return true;
-                    if (PentecostMonday(year) == date)
-                        return true;
-                    if (HasCorpusChristi && CorpusChristi(year) == date)
-                        return true;
-                    break;
-
-                case 8:
-                    if (HasAssumption && Assumption(year) == date)
-                        return true;
-                    break;
-
-                case 10:
-                    if (GermanUnity(year) == date)
-                        return true;
-                    //All states observe Reformation in 2017, 500th anniversary
-                    if ((HasReformation || year == 2017) && Reformation(year) == date)
-                        return true;
-                    break;
-
-                case 11:
-                    if (HasAllSaints && AllSaints(year) == date)
-                        return true;
-                    if (HasRepentance && Repentance(year) == date)
-                        return true;
-                    break;
-
-                case 12:
-                    if (Christmas(year) == date)
-                        return true;
-                    if (StStephen(year) == date)
-                        return true;
-                    break;
+                if (day.Key == dt)
+                {
+                    return true;
+                }
             }
-
             return false;
         }
+
+        #endregion
+
+        #region ExtendedPublicHoliday Override Methods
+
+        public override IDictionary<DateTime, string> AllHolidaysName(int year)
+        {
+            var holidays = new Dictionary<DateTime, string> { { NewYear(year), "Neujahrstag" } };
+            holidays.Add(Epiphany(year), "Heilige Drei Könige");
+            holidays.Add(GoodFriday(year), "Karfreitag");
+            holidays.Add(HolidayCalculator.GetEaster(year), "Ostersonntag");
+            holidays.Add(EasterMonday(year), "Ostermontag");
+            holidays.Add(MayDay(year), "Tag der Arbeit");
+            holidays.Add(Ascension(year), "Christi Himmelfahrt");
+            holidays.Add(PentecostSunday(year), "Pfingstsonntag");
+            holidays.Add(PentecostMonday(year), "Pfingstmontag");
+            holidays.Add(CorpusChristi(year), "Fronleichnam"); // Happy cadaver
+            holidays.Add(Assumption(year), "Mariä Himmelfahrt");
+            holidays.Add(GermanUnity(year), "Tag der Deutschen Einheit");
+            holidays.Add(Reformation(year), "Reformationstag");
+            holidays.Add(AllSaints(year), "Allerheiligen");
+            holidays.Add(Repentance(year), "Buß- und Bettag");
+            holidays.Add(ChristmasEve(year), "Heiligabend");
+            holidays.Add(Christmas(year), "Weihnachtstag");
+            holidays.Add(StStephen(year), "Zweiter Weihnachtsfeiertag");
+            holidays.Add(NewYearsEve(year), "Silvester");
+
+            return holidays;
+        }
+
+        public override IList<DateTime> AllHolidays(int year)
+        {
+            var days = new List<DateTime>();
+            var holidays = AllHolidaysName(year);
+            foreach (var day in holidays)
+            {
+                days.Add(day.Key);
+            }
+            return days;
+        }
+
+        public override bool IsHoliday(DateTime dt)
+        {
+            foreach (var day in AllHolidaysName(dt.Year))
+            {
+                if (day.Key == dt)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public override IList<DateTime> GetAllHolidaysInDateRange(DateTime startDate, DateTime endDate)
+        {
+            var days = new List<DateTime>();
+            var holidays = GetAllHolidaysNameInDateRange(startDate, endDate);
+            foreach (var day in holidays)
+            {
+                days.Add(day.Key);
+            }
+            return days;
+
+        }
+
+        public override IDictionary<DateTime, string> GetAllHolidaysNameInDateRange(DateTime startDate, DateTime endDate)
+        {
+            var holidays = new Dictionary<DateTime, string>();
+            for (var year = startDate.Year; year <= endDate.Year; year++)
+            {
+
+                var days = AllHolidaysName(year)
+                        .Where(d => d.Key >= startDate && d.Key <= endDate);
+                foreach (var item in days)
+                {
+                    holidays.Add(item.Key, item.Value);
+                }
+            }
+            return holidays;
+        }
+
+        #endregion
+        #endregion
+
     }
 }
