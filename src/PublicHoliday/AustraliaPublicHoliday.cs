@@ -23,7 +23,7 @@ namespace PublicHoliday
         /// <summary>
         ///
         /// </summary>
-        public enum States
+        public enum States 
         {
             /// <summary>
             /// All
